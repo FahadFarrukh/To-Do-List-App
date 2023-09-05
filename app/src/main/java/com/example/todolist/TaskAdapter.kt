@@ -15,6 +15,11 @@ import com.example.todolist.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class TaskAdapter(
     private val context: Context,
@@ -44,7 +49,20 @@ class TaskAdapter(
             number.text = "Task $taskNumber"
             textView1.text = task.name
             textView2.text = task.description
-            textView3.text = task.date
+
+            // Parse the date from the task entity and format it
+            val calendar = Calendar.getInstance()
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val formattedDate = SimpleDateFormat("EEEE, d MMM yyyy", Locale.getDefault())
+
+            try {
+                calendar.time = dateFormat.parse(task.date) ?: Date()
+                val formattedDateString = formattedDate.format(calendar.time)
+                textView3.text = formattedDateString
+            } catch (e: ParseException) {
+                e.printStackTrace()
+                textView3.text = task.date // In case of parsing error, show the original date string
+            }
 
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -52,7 +70,6 @@ class TaskAdapter(
                 }
             }
         }
-
         private fun showDeleteConfirmationDialog(task: TaskEntity) {
             val alertDialogBuilder = AlertDialog.Builder(context)
             alertDialogBuilder.setTitle("Task Completed")

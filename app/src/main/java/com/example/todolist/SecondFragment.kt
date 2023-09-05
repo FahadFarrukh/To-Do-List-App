@@ -97,8 +97,13 @@ class SecondFragment : Fragment() {
         picker.addOnPositiveButtonClickListener { selection ->
             // Store the selected date as a Long timestamp
             selectedDate = selection
-            val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                .format(selection)
+
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = selection
+
+            // Format the date to "Monday, 5 Sept 2023" format
+            val formattedDate = SimpleDateFormat("EEEE, d MMM yyyy", Locale.getDefault())
+                .format(calendar.time)
 
             // Convert the formattedDate String to an Editable
             val editableFormattedDate = Editable.Factory.getInstance().newEditable(formattedDate)
@@ -109,6 +114,7 @@ class SecondFragment : Fragment() {
 
         picker.show(requireActivity().supportFragmentManager, picker.toString())
     }
+
 
 
     private fun showErrorMessage(message: String) {
